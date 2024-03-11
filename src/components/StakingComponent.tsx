@@ -1,3 +1,4 @@
+// StakingComponent.tsx
 import React, { useState, useEffect } from "react";
 import {
   getSigner,
@@ -9,10 +10,12 @@ import {
 } from "../contracts/StakingContract";
 
 const StakingComponent: React.FC = () => {
+  // State for user input and contract data
   const [stakeAmount, setStakeAmount] = useState<number>(0);
   const [stakingDetails, setStakingDetails] = useState<any | null>(null);
   const [stakerInfo, setStakerInfo] = useState<any | null>(null);
 
+  // Function to handle staking tokens
   const handleStake = async () => {
     const signer = await getSigner();
     if (signer) {
@@ -20,19 +23,23 @@ const StakingComponent: React.FC = () => {
     }
   };
 
+  // Function to handle unstaking tokens
   const handleUnstake = async () => {
     await unstakeTokens();
   };
 
+  // Function to handle claiming rewards
   const handleClaimRewards = async () => {
     await claimRewards();
   };
 
+  // Function to fetch and set staking contract details
   const handleGetDetails = async () => {
     const details = await getStakingDetails();
     setStakingDetails(details);
   };
 
+  // Function to fetch and set staker information
   const handleGetStakerInfo = async () => {
     const signer = await getSigner();
     if (signer) {
@@ -42,10 +49,13 @@ const StakingComponent: React.FC = () => {
     }
   };
 
+  // useEffect hook to fetch initial data on component mount
   useEffect(() => {
     handleGetDetails();
     handleGetStakerInfo();
   }, []);
+
+  // Render UI components
   return (
     <div>
       <h2>Staking Component</h2>
