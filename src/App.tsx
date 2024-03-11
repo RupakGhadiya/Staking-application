@@ -1,9 +1,8 @@
 import React from "react";
 import StakingComponent from "./components/StakingComponent";
-
 const App = () => {
   return (
-    <div>
+    <div className="App">
       <StakingComponent />
     </div>
   );

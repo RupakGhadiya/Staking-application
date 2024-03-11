@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import stakingContractAbi from "../assets/ContractAbi/stakingContractAbi.json";
 import stakingContractAddress from "../assets/ContractAddress/stakingContractAddress";
+import { toast } from "react-toastify";
 
 // Declare a global window variable for Ethereum-related objects
 let signer: ethers.Signer | undefined;
@@ -24,7 +25,7 @@ export const getSigner = async (): Promise<ethers.Signer | undefined> => {
     if (window.ethereum) {
       // Request user account access from MetaMask
       await window.ethereum.request({ method: "eth_requestAccounts" });
-      
+
       // Create a provider and signer using the MetaMask provider
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       signer = provider.getSigner();
@@ -34,6 +35,7 @@ export const getSigner = async (): Promise<ethers.Signer | undefined> => {
       console.error(
         "MetaMask not detected. Please install MetaMask to use this application."
       );
+
       return undefined;
     }
   } catch (error) {
@@ -44,7 +46,9 @@ export const getSigner = async (): Promise<ethers.Signer | undefined> => {
 };
 
 // Function to get the staking contract instance
-export const getStakingContract = async (): Promise<ethers.Contract | undefined> => {
+export const getStakingContract = async (): Promise<
+  ethers.Contract | undefined
+> => {
   // Get the current signer
   const currentSigner = await getSigner();
 
@@ -71,9 +75,26 @@ export const stakeTokens = async (amount: number) => {
       const transaction = await stakingContract.stake(amount);
       await transaction.wait();
       console.log(`Successfully staked ${amount} tokens!`);
-    } catch (error) {
+    } catch (error: any) {
       // Handle errors while staking tokens
+
       console.error("Error staking tokens:", error);
+
+      const errorReasonMatch = error.message.match(/reason="([^"]+)"/);
+      const errorReason = errorReasonMatch
+        ? errorReasonMatch[1]
+        : "An error occurred";
+
+      toast.error(errorReason, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   } else {
     // Display an error message if the staking contract instance is not available
@@ -90,9 +111,25 @@ export const unstakeTokens = async () => {
       const transaction = await stakingContract.unstake();
       await transaction.wait();
       console.log("Successfully unstaked tokens!");
-    } catch (error) {
+    } catch (error: any) {
       // Handle errors while unstaking tokens
       console.error("Error unstaking tokens:", error);
+
+      const errorReasonMatch = error.message.match(/reason="([^"]+)"/);
+      const errorReason = errorReasonMatch
+        ? errorReasonMatch[1]
+        : "An error occurred";
+
+      toast.error(errorReason, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   } else {
     // Display an error message if the staking contract instance is not available
@@ -109,9 +146,24 @@ export const claimRewards = async () => {
       const transaction = await stakingContract.claimRewards();
       await transaction.wait();
       console.log("Successfully claimed rewards!");
-    } catch (error) {
+    } catch (error: any) {
       // Handle errors while claiming rewards
       console.error("Error claiming rewards:", error);
+      const errorReasonMatch = error.message.match(/reason="([^"]+)"/);
+      const errorReason = errorReasonMatch
+        ? errorReasonMatch[1]
+        : "An error occurred";
+
+      toast.error(errorReason, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
   } else {
     // Display an error message if the staking contract instance is not available
@@ -126,9 +178,24 @@ export const getStakingDetails = async (): Promise<any> => {
     try {
       // Get staking details
       return await stakingContract.getDetails();
-    } catch (error) {
+    } catch (error: any) {
       // Handle errors while getting staking details
       console.error("Error getting staking details:", error);
+      const errorReasonMatch = error.message.match(/reason="([^"]+)"/);
+      const errorReason = errorReasonMatch
+        ? errorReasonMatch[1]
+        : "An error occurred";
+
+      toast.error(errorReason, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       return null;
     }
   } else {
@@ -145,9 +212,24 @@ export const getStakerInfo = async (stakerAddress: string): Promise<any> => {
     try {
       // Get staker information
       return await stakingContract.getStakerInfo(stakerAddress);
-    } catch (error) {
+    } catch (error: any) {
       // Handle errors while getting staker information
       console.error("Error getting staker info:", error);
+      const errorReasonMatch = error.message.match(/reason="([^"]+)"/);
+      const errorReason = errorReasonMatch
+        ? errorReasonMatch[1]
+        : "An error occurred";
+
+      toast.error(errorReason, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
       return null;
     }
   } else {
