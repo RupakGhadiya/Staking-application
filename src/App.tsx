@@ -1,4 +1,3 @@
-import React from "react";
 import StakingComponent from "./components/StakingComponent";
 const App = () => {
   return (
