@@ -115,7 +115,7 @@ const StakingComponent: React.FC = () => {
   // Render UI components
   return (
     <div className="StakingConponent">
-      <h2>{loading ? "Loading..." : "Staking Component"}</h2>
+      <h2>{loading ? <div className="loader"></div> : "Staking Component"}</h2>
       <div className="StackInput">
         <input
           type="number"

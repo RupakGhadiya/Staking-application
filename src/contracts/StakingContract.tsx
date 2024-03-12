@@ -1,6 +1,8 @@
 import { ethers } from "ethers";
 import stakingContractAbi from "../assets/ContractAbi/stakingContractAbi.json";
 import stakingContractAddress from "../assets/ContractAddress/stakingContractAddress";
+import tokenContractABI from "../assets/ContractAbi/tokenContractAbi.json";
+import tokenContractAddress from "../assets/ContractAddress/tokenContractAddress";
 import { toast } from "react-toastify";
 
 // Declare a global window variable for Ethereum-related objects
@@ -65,18 +67,59 @@ export const getStakingContract = async (): Promise<
     return undefined;
   }
 };
+const getERC20TokenContract = async (): Promise<ethers.Contract | null> => {
+  try {
+    // Connect to the Ethereum network
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await window.ethereum.enable();
+
+    // Get the signer (account) from the provider
+    const signer = provider.getSigner();
+
+    // Create a contract instance for your ERC-20 token
+    const tokenContract = new ethers.Contract(
+      tokenContractAddress,
+      tokenContractABI,
+      signer
+    );
+    return tokenContract;
+  } catch (error) {
+    console.error("Error getting ERC20 token contract:", error);
+    return null;
+  }
+};
 
 // Function to stake tokens
 export const stakeTokens = async (amount: number) => {
   const stakingContract = await getStakingContract();
-  if (stakingContract) {
+  const tokenContract = await getERC20TokenContract();
+
+  if (stakingContract && tokenContract) {
     try {
+      // First, approve the staking contract to spend the specified amount of tokens
+      const approvalTransaction = await tokenContract.approve(
+        stakingContract.address,
+        amount
+      );
+      await approvalTransaction.wait();
+
       // Stake tokens and wait for the transaction to be confirmed
-      const transaction = await stakingContract.stake(amount);
-      await transaction.wait();
+      const stakingTransaction = await stakingContract.stake(amount);
+      await stakingTransaction.wait();
+
       console.log(`Successfully staked ${amount} tokens!`);
+      toast.success(`Successfully staked ${amount} tokens!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } catch (error: any) {
-      // Handle errors while staking tokens
+      // Handle errors while interacting with contracts
 
       console.error("Error staking tokens:", error);
 
@@ -97,8 +140,8 @@ export const stakeTokens = async (amount: number) => {
       });
     }
   } else {
-    // Display an error message if the staking contract instance is not available
-    console.error("Could not get staking contract instance.");
+    // Display an error message if contract instances are not available
+    console.error("Could not get staking or token contract instance.");
   }
 };
 
@@ -111,6 +154,16 @@ export const unstakeTokens = async () => {
       const transaction = await stakingContract.unstake();
       await transaction.wait();
       console.log("Successfully unstaked tokens!");
+      toast.success("Successfully unstaked tokens!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } catch (error: any) {
       // Handle errors while unstaking tokens
       console.error("Error unstaking tokens:", error);
@@ -146,6 +199,16 @@ export const claimRewards = async () => {
       const transaction = await stakingContract.claimRewards();
       await transaction.wait();
       console.log("Successfully claimed rewards!");
+      toast.success("Successfully claimed rewards!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     } catch (error: any) {
       // Handle errors while claiming rewards
       console.error("Error claiming rewards:", error);
